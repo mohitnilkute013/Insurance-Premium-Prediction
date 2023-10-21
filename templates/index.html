@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Prediction App</title>
+    <style>
+
+        /* Body styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 10px;
+            padding: 0;
+        }
+
+        /* Container for the form */
+        .container {
+            background-color: #fff;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex; /* Add flexbox for side panel */
+        }
+
+        /* Side panel styles */
+        .side-panel {
+            flex: none; /* Remove the flex property to fix the width */
+            width: 20%; /* Set a fixed width for the side panel */
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        /* Form styles */
+        .form-container {
+            flex: 80%; /* Adjust the width of the form container as needed */
+        }
+
+        /* Form styles */
+        /* #prediction-form {
+            margin-top: 20px;
+        } */
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            width: 97%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Result styles */
+        #result {
+            margin-top: 20px;
+        }
+
+        #prediction-text {
+            color: #007BFF;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 50px;
+        }
+
+
+        /* form{
+            border-width: 3px; 
+        }
+
+        .form-group{
+            margin: 10px;
+        } */
+    </style>
+
+</head>
+<body>
+    <h1 style="text-align: center;">Welcome to {{title}}</h1>
+    
+    <div class="container">
+        <!-- Side Panel -->
+        <div class="side-panel">
+            <h2>Mode:</h2>
+            <input type="radio" id="Train" name="mode" value="Train">
+            <label for="train">Train</label><br>
+            <input type="radio" id="Predict" name="mode" value="Predict">
+            <label for="predict">Predict</label><br>
+        </div>
+
+        
+        <div class="form-container">
+            <h2 style="text-align: center;">Please fill the below information required for prediction!</h2>
+            <form id="prediction-form" method="POST">
+
+                {% for param, param_value in parameters.items() %}
+                    <div class="form-group">
+                        <label for="{{ param }}">{{ param }}:</label>
+                        {% if param_value == 'text' %}
+                            <input type="text" id="{{ param }}" name="{{ param }}" placeholder="Enter {{ param }} value (float)">
+                        {% elif param_value is iterable %}
+                            <select id="{{ param }}" name="{{ param }}">
+                                {% for option in param_value %}
+                                    <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            
+                <button type="submit">Predict</button>
+            </form>
+
+            <div id="result">
+                {% if final_result is defined %}
+                  <h2>Result:</h2>
+                  <h3 id="prediction-text">{{ final_result }}</h3>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Training Container (Initially hidden) -->
+        <div class="training-container" style="display: none;">
+            <h2 style="text-align: center;">Training Mode</h2>
+            <h4 style="text-align: center;">Let's train the Model ! AGAIN ?</h4>
+            <button id="train-button" type="submit">Train Model</button>
+            <p id="training-status"></p>
+        </div>
+
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get DOM elements
+            const trainContainer = document.querySelector(".training-container");
+            const predictContainer = document.querySelector(".form-container");
+            const trainButton = document.getElementById("train-button");
+            const trainingStatus = document.getElementById("training-status");
+    
+            // Handle radio button change event
+            document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+                radio.addEventListener("change", function() {
+                    if (this.value === "Train") {
+                        trainContainer.style.display = "block";
+                        predictContainer.style.display = "none";
+                    } else {
+                        trainContainer.style.display = "none";
+                        predictContainer.style.display = "block";
+                    }
+                });
+            });
+    
+            // Handle training button click event
+            trainButton.addEventListener("click", function() {
+                trainingStatus.textContent = "Training on current stored data ...";
+    
+                // Use AJAX to send a request to the server for training
+                fetch("/train", {
+                    method: "POST"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "completed") {
+                        trainingStatus.textContent = "Training Completed!";
+                    } else {
+                        trainingStatus.textContent = "Training Failed.";
+                    }
+                })
+                .catch(error => {
+                    trainingStatus.textContent = "Training Failed.";
+                    console.error(error);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+pandas
+numpy
+scipy
+scikit-learn
+matplotlib
+seaborn
+xgboost
+catboost
+Flask
+gunicorn
+mlflow
+dvc
+ipykernel
+streamlit
+graphviz
+# -e .

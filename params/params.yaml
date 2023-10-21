@@ -1,0 +1,215 @@
+# Data Transformation Parameters
+# This part contains the parameters for data transformation.
+
+# The following preprocessor key should have two sub dictionaries namely column_groups and preprocessing_steps.
+# 1. column_group is a dictionary with keys as columns to be grouped together, 
+#     values are lists of columns that need to be taken under consideration for similar pipelining process
+# 2. preprocessing_steps are the steps that need to be added in the pipelining structure for the respective column group
+
+# Note: The order of the columns should match to the preprocessor's arguments 
+# (in this case OrdinalEncoder's categories argument should have similar order as given in column_groups categorical_cols)
+preprocessor:
+  column_groups:
+    numerical_cols:
+      - age
+      - bmi
+      - children
+      # Add more numerical columns as your data has
+    categorical_cols:
+      - sex
+      - smoker
+      - region
+      # Add more categorical columns as your data has
+
+  preprocessing_steps:
+    numerical_cols:
+      - name: StandardScaler
+        class: sklearn.preprocessing.StandardScaler
+
+    categorical_cols:
+      - name: OrdinalEncoder
+        class: sklearn.preprocessing.OrdinalEncoder
+        init_args:
+          categories:
+            - ['male', 'female']
+            - ['no', 'yes']
+            - ['southeast', 'southwest', 'northwest', 'northeast']
+      - name: StandardScaler
+        class: sklearn.preprocessing.StandardScaler
+
+    # Add more preprocessing steps as needed for numerical_cols and categorical_cols
+
+
+
+# Model Trainer Parameters
+# This part contains the parameters for Model Training.
+
+# All Models should have 3 attributes:
+# 1. name - Name of the model (should be unique)
+# 2. class - The module/library in which the class is (including class name)
+# 3. init_args - Any arguments to be passed in the class instance
+
+# Note: If the init_args contain further estimator parameter than it will handle accordingly in the code.
+# Just pass the class and init_args relative to the estimator like point 2 & 3.
+
+models:
+  - name: LinearRegression
+    class: sklearn.linear_model.LinearRegression
+    init_args:
+      fit_intercept: True
+  - name: Lasso
+    class: sklearn.linear_model.Lasso
+    init_args:
+      alpha: 1.0
+  - name: Ridge
+    class: sklearn.linear_model.Ridge
+    init_args:
+      alpha: 1.0
+  - name: Elasticnet
+    class: sklearn.linear_model.ElasticNet
+    init_args:
+      alpha: 1.0
+      l1_ratio: 0.5
+  - name: DecisionTree
+    class: sklearn.tree.DecisionTreeRegressor
+    init_args:
+      random_state: 42
+  - name: SVR linear
+    class: sklearn.svm.SVR
+    init_args:
+      kernel: linear
+  - name: SVR rbf
+    class: sklearn.svm.SVR
+    init_args:
+      kernel: rbf
+  - name: KNNR
+    class: sklearn.neighbors.KNeighborsRegressor
+    init_args:
+      n_neighbors: 3
+  - name: RandomForest
+    class: sklearn.ensemble.RandomForestRegressor
+    init_args:
+      random_state: 42
+  - name: AdaBoost
+    class: sklearn.ensemble.AdaBoostRegressor
+    init_args:
+      estimator:
+        class: sklearn.tree.DecisionTreeRegressor
+        init_args:
+          random_state: 42
+  - name: Gradient Boosting
+    class: sklearn.ensemble.GradientBoostingRegressor
+  - name: XGB
+    class: xgboost.XGBRegressor
+  - name: CatBoost
+    class: catboost.CatBoostRegressor
+  - name: BaggingSVR
+    class: sklearn.ensemble.BaggingRegressor
+    init_args:
+      estimator:
+        class: sklearn.svm.SVR
+
+
+
+# Model Tuner parameters
+# This part contains parameters for Model Tuning.
+
+# All Models should have 3 attributes:
+# 1. name - Name of the model (should be unique)
+# 2. class - The module/library in which the class is (including class name)
+# 3. param_search_space - The param_grid that needs to be passed during hypertuning using RandomizedSearchCV
+
+# Note: If the param_search_space contain further estimator parameter than it won't handle it.
+
+tune_models:
+  - name: LinearRegression
+    class: sklearn.linear_model.LinearRegression
+    param_search_space:
+      fit_intercept: [True, False]
+
+  - name: Lasso
+    class: sklearn.linear_model.Lasso
+    param_search_space:
+      alpha: [0.1, 0.5, 1.0]
+
+  - name: Ridge
+    class: sklearn.linear_model.Ridge
+    param_search_space:
+      alpha: [0.1, 0.5, 1.0]
+
+  - name: Elasticnet
+    class: sklearn.linear_model.ElasticNet
+    param_search_space:
+      alpha: [0.1, 0.5, 1.0]
+      l1_ratio: [0.1, 0.5, 0.9]
+
+  - name: DecisionTree
+    class: sklearn.tree.DecisionTreeRegressor
+    param_search_space:
+      max_depth: [None, 5, 10]
+      min_samples_split: [2, 5, 10]
+
+  - name: SVR linear
+    class: sklearn.svm.SVR
+    param_search_space:
+      kernel: ['linear']
+      C: [0.1, 1.0, 10.0]
+      epsilon: [0.01, 0.1, 0.5]
+
+  - name: SVR rbf
+    class: sklearn.svm.SVR
+    param_search_space:
+      kernel: ['rbf']
+      C: [0.1, 1.0, 10.0]
+      epsilon: [0.01, 0.1, 0.5]
+
+  - name: KNNR
+    class: sklearn.neighbors.KNeighborsRegressor
+    param_search_space:
+      n_neighbors: [3, 5, 7]
+      weights: ['uniform', 'distance']
+      p: [1, 2]
+
+  - name: RandomForest
+    class: sklearn.ensemble.RandomForestRegressor
+    param_search_space:
+      n_estimators: [100, 200, 300]
+      max_depth: [5, 10]
+      min_samples_split: [2, 5, 10]
+      min_samples_leaf: [1, 2, 5]
+
+  - name: AdaBoost
+    class: sklearn.ensemble.AdaBoostRegressor
+    param_search_space:
+      # base_estimator: [DecisionTreeRegressor(random_state=42)]
+      n_estimators: [50, 100, 200]
+      learning_rate: [0.01, 0.1, 0.5]
+
+  - name: Gradient Boosting
+    class: sklearn.ensemble.GradientBoostingRegressor
+    param_search_space:
+      loss: ['squared_error', 'huber']
+      learning_rate: [0.01, 0.1, 0.5]
+      n_estimators: [100, 200, 500]
+      max_depth: [3, 4, 5]
+
+  - name: XGB
+    class: xgboost.XGBRegressor
+    param_search_space:
+      n_estimators: [100, 200, 300]
+      learning_rate: [0.01, 0.1, 0.2]
+      max_depth: [3, 4, 5]
+
+  - name: CatBoost
+    class: catboost.CatBoostRegressor
+    param_search_space:
+      iterations: [100, 200, 300]
+      learning_rate: [0.01, 0.1, 0.2]
+      depth: [4, 6, 8]
+      loss_function: ['MAE', 'RMSE']
+
+  - name: BaggingSVR
+    class: sklearn.ensemble.BaggingRegressor
+    param_search_space:
+      # base_estimator: [SVR(kernel='linear')]
+      n_estimators: [10, 50, 100]

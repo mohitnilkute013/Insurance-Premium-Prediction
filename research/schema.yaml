@@ -1,0 +1,8 @@
+COLUMNS:
+  age: int64
+  bmi: float64
+  children: int64
+  expenses: float64
+  region: object
+  sex: object
+  smoker: object

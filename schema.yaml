@@ -1,0 +1,10 @@
+COLUMNS:
+  input_features:
+    age: int64
+    bmi: float64
+    children: int64
+    region: object
+    sex: object
+    smoker: object
+  target_feature:
+    expenses: float64
