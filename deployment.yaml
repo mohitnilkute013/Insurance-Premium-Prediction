@@ -1,0 +1,21 @@
+kind: Deployment
+metadata:
+  name: insurance-gke
+spec:
+  replicas: 3
+  selector:
+    matchlabels:
+      app: insurance-gke
+  template:
+    metadata:
+      labels:
+        app: insurance-gke
+    spec:
+      containers:
+      - name: insurance-gke
+        image: gcr.io/phrasal-concord-401809/kubernetes1:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"

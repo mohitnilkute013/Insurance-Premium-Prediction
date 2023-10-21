@@ -1,0 +1,17 @@
+# The Insurance Predictor Service provides a load-balancing proxy over the insurance-app
+# Pods. By specifying the type as a 'LoadBalancer', Kubernetes Engine will
+# automatically create an external IP for this service and distribute incoming
+# traffic across all instances of the app running in each zone.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: insurance-predictor-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: insurance-predictor
+  ports:
+    # - protocol: TCP
+    -port: 80
+    targetPort: 8080
