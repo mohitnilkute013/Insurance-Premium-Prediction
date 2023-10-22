@@ -1,3 +1,4 @@
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: insurance-gke
@@ -12,7 +13,7 @@ spec:
         app: insurance-gke
     spec:
       containers:
-      - name: insurance-gke
+      - name: kubernetes1
         image: gcr.io/phrasal-concord-401809/kubernetes1:latest
         ports:
         - containerPort: 8080
