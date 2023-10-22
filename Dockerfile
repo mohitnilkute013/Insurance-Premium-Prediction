@@ -22,9 +22,9 @@ RUN pip install -r requirements.txt
 EXPOSE 80
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+# CMD ["python", "app.py"]
 
 # Run the web service on container startup. here, we use the gunicorn
 # webserver, with one worker process and 8 threads.
 #CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
-# CMD ["gunicorn", "--bind=0.0.0.0:5000", "--workers=1", "--threads=8", "--timeout=0", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
