@@ -36,3 +36,8 @@ Check Demo on website:
 ```
 https://huggingface.co/spaces/mohitnilkute013/Insurance-Premium-Prediction-App
 ```
+
+Check this ip address for website deployed on GKE (Google Kubernetes Engine)
+```
+http://35.193.144.17/
+```
