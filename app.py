@@ -14,7 +14,7 @@ app=application
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
 
-    title = 'Insurance Premium Prediction App'
+    title = 'My Insurance Premium Prediction App :)'
 
     parameters = {
             'age': 'text',
